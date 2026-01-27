@@ -13,9 +13,9 @@ export interface PlanLimits {
 
 export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
   FREE: {
-    testimonials: 10,
-    forms: 1,
-    widgets: 1,
+    testimonials: 50,
+    forms: 5,
+    widgets: 5,
     showBranding: true,
     whatsapp: false,
     analytics: false,
