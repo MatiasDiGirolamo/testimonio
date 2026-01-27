@@ -72,14 +72,14 @@ export async function GET(
   }
 }
 
-function generateWidgetScript(widgetId: string, data: any): string {
+function generateWidgetScript(widgetId: string, data: object): string {
   return `
 (function() {
   const WIDGET_DATA = ${JSON.stringify(data)};
   const container = document.querySelector('[data-testimonio-widget="${widgetId}"]');
   if (!container) return;
 
-  // Styles
+  // Styles - Compact version
   const styles = document.createElement('style');
   styles.textContent = \`
     .tm-widget {
@@ -88,27 +88,32 @@ function generateWidgetScript(widgetId: string, data: any): string {
       --tm-bg: \${WIDGET_DATA.bgColor};
       --tm-text: \${WIDGET_DATA.textColor};
       --tm-radius: \${WIDGET_DATA.borderRadius}px;
+      max-width: 100%;
     }
     .tm-card {
       background: var(--tm-bg);
       border-radius: var(--tm-radius);
-      padding: 24px;
+      padding: 16px 20px;
       border: 1px solid rgba(0,0,0,0.08);
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      display: inline-block;
+      max-width: 400px;
+      width: 100%;
     }
-    .tm-stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+    .tm-stars { color: #f59e0b; font-size: 12px; margin-bottom: 8px; letter-spacing: 1px; }
     .tm-text { 
-      font-size: 16px; 
+      font-size: 14px; 
       color: var(--tm-text); 
-      line-height: 1.7; 
-      margin-bottom: 16px;
+      line-height: 1.5; 
+      margin-bottom: 12px;
+      margin: 0 0 12px 0;
     }
     .tm-text::before { content: '"'; }
     .tm-text::after { content: '"'; }
-    .tm-author { display: flex; align-items: center; gap: 12px; }
+    .tm-author { display: flex; align-items: center; gap: 10px; }
     .tm-avatar { 
-      width: 44px; 
-      height: 44px; 
+      width: 36px; 
+      height: 36px; 
       border-radius: 50%; 
       background: linear-gradient(135deg, var(--tm-primary), #d97706); 
       color: white; 
@@ -116,57 +121,65 @@ function generateWidgetScript(widgetId: string, data: any): string {
       align-items: center; 
       justify-content: center; 
       font-weight: 600; 
-      font-size: 14px;
+      font-size: 12px;
+      flex-shrink: 0;
     }
-    .tm-info { flex: 1; }
-    .tm-name { font-weight: 600; color: var(--tm-text); font-size: 15px; }
-    .tm-company { font-size: 13px; color: var(--tm-text); opacity: 0.6; }
-    .tm-powered { text-align: center; margin-top: 16px; font-size: 12px; opacity: 0.5; }
+    .tm-info { flex: 1; min-width: 0; }
+    .tm-name { font-weight: 600; color: var(--tm-text); font-size: 13px; }
+    .tm-company { font-size: 11px; color: var(--tm-text); opacity: 0.6; }
+    .tm-powered { text-align: center; margin-top: 12px; font-size: 10px; opacity: 0.4; }
     .tm-powered a { color: inherit; text-decoration: none; }
     .tm-powered a:hover { color: var(--tm-primary); }
-    .tm-empty { text-align: center; padding: 32px; color: #64748b; }
+    .tm-empty { text-align: center; padding: 20px; color: #64748b; font-size: 13px; }
     
     /* Carousel specific */
-    .tm-carousel { position: relative; overflow: hidden; }
-    .tm-carousel-track { display: flex; transition: transform 0.5s ease; }
-    .tm-carousel-slide { min-width: 100%; padding: 0 4px; box-sizing: border-box; }
-    .tm-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+    .tm-carousel { position: relative; overflow: hidden; max-width: 400px; }
+    .tm-carousel-track { display: flex; transition: transform 0.4s ease; }
+    .tm-carousel-slide { min-width: 100%; box-sizing: border-box; }
+    .tm-carousel-slide .tm-card { max-width: 100%; display: block; }
+    .tm-dots { display: flex; justify-content: center; gap: 6px; margin-top: 12px; }
     .tm-dot { 
-      width: 8px; height: 8px; border-radius: 50%; 
+      width: 6px; height: 6px; border-radius: 50%; 
       background: var(--tm-text); opacity: 0.2;
-      cursor: pointer; border: none; transition: all 0.2s; 
+      cursor: pointer; border: none; transition: all 0.2s; padding: 0;
     }
     .tm-dot.active { opacity: 1; background: var(--tm-primary); }
     .tm-nav { 
       position: absolute; top: 50%; transform: translateY(-50%);
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 28px; height: 28px; border-radius: 50%;
       background: white; border: 1px solid rgba(0,0,0,0.1);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 18px; color: var(--tm-text); z-index: 10;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 14px; color: var(--tm-text); z-index: 10;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1); padding: 0;
     }
     .tm-nav:hover { background: var(--tm-bg); }
-    .tm-nav-prev { left: 8px; }
-    .tm-nav-next { right: 8px; }
+    .tm-nav-prev { left: 4px; }
+    .tm-nav-next { right: 4px; }
     
     /* Grid specific */
     .tm-grid { 
       display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-      gap: 16px; 
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      gap: 12px; 
     }
+    .tm-grid .tm-card { max-width: 100%; display: block; }
     
     /* Wall (Masonry) specific */
     .tm-wall { 
       columns: 3;
-      column-gap: 16px;
+      column-gap: 12px;
     }
     @media (max-width: 900px) { .tm-wall { columns: 2; } }
     @media (max-width: 600px) { .tm-wall { columns: 1; } }
     .tm-wall .tm-card { 
       break-inside: avoid; 
-      margin-bottom: 16px;
+      margin-bottom: 12px;
+      max-width: 100%;
+      display: block;
     }
+
+    /* Single - centered */
+    .tm-single { display: flex; justify-content: center; }
   \`;
   document.head.appendChild(styles);
 
@@ -222,7 +235,9 @@ function generateWidgetScript(widgetId: string, data: any): string {
     const t = WIDGET_DATA.testimonials[0];
     container.innerHTML = \`
       <div class="tm-widget">
-        \${renderCard(t)}
+        <div class="tm-single">
+          \${renderCard(t)}
+        </div>
         \${renderBranding()}
       </div>
     \`;
