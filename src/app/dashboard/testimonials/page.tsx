@@ -12,7 +12,7 @@ interface Testimonial {
   authorCompany?: string;
   authorTitle?: string;
   rating: number;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "ARCHIVED";
   createdAt: string;
 }
 
@@ -46,6 +46,20 @@ export default function TestimonialsPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
+      });
+      loadTestimonials();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  async function deleteTestimonial(id: string) {
+    if (!confirm("¿Seguro que querés eliminar este testimonio? Esta acción no se puede deshacer.")) {
+      return;
+    }
+    try {
+      await fetch(`/api/testimonials/${id}`, {
+        method: "DELETE",
       });
       loadTestimonials();
     } catch (error) {
@@ -120,6 +134,8 @@ export default function TestimonialsPage() {
                 testimonial={testimonial}
                 onApprove={() => updateStatus(testimonial.id, "APPROVED")}
                 onReject={() => updateStatus(testimonial.id, "REJECTED")}
+                onArchive={() => updateStatus(testimonial.id, "ARCHIVED")}
+                onDelete={() => deleteTestimonial(testimonial.id)}
               />
             ))}
           </div>
@@ -132,22 +148,28 @@ export default function TestimonialsPage() {
 function TestimonialCard({ 
   testimonial, 
   onApprove, 
-  onReject 
+  onReject,
+  onArchive,
+  onDelete,
 }: { 
   testimonial: Testimonial;
   onApprove: () => void;
   onReject: () => void;
+  onArchive: () => void;
+  onDelete: () => void;
 }) {
   const statusStyles = {
     PENDING: "bg-amber-100 text-amber-700",
     APPROVED: "bg-green-100 text-green-700",
     REJECTED: "bg-red-100 text-red-700",
+    ARCHIVED: "bg-gray-100 text-gray-700",
   };
 
   const statusLabels = {
     PENDING: "Pendiente",
     APPROVED: "Aprobado",
     REJECTED: "Rechazado",
+    ARCHIVED: "Archivado",
   };
 
   const initials = testimonial.authorName
@@ -202,25 +224,54 @@ function TestimonialCard({
         </div>
 
         {/* Actions */}
-        {testimonial.status === "PENDING" && (
-          <div className="flex sm:flex-col gap-2 shrink-0">
-            <Button
-              size="sm"
-              onClick={onApprove}
-              className="bg-accent hover:bg-accent/90 text-accent-foreground"
-            >
-              ✓ Aprobar
-            </Button>
+        <div className="flex sm:flex-col gap-2 shrink-0">
+          {testimonial.status === "PENDING" && (
+            <>
+              <Button
+                size="sm"
+                onClick={onApprove}
+                className="bg-accent hover:bg-accent/90 text-accent-foreground"
+              >
+                ✓ Aprobar
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onReject}
+                className="border-destructive/50 text-destructive hover:bg-destructive/10"
+              >
+                ✗ Rechazar
+              </Button>
+            </>
+          )}
+          {testimonial.status === "APPROVED" && (
             <Button
               size="sm"
               variant="outline"
-              onClick={onReject}
-              className="border-destructive/50 text-destructive hover:bg-destructive/10"
+              onClick={onArchive}
             >
-              ✗ Rechazar
+              📦 Archivar
             </Button>
-          </div>
-        )}
+          )}
+          {testimonial.status === "REJECTED" && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={onApprove}
+              className="text-accent"
+            >
+              ✓ Aprobar
+            </Button>
+          )}
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onDelete}
+            className="text-destructive hover:bg-destructive/10"
+          >
+            🗑️ Eliminar
+          </Button>
+        </div>
       </div>
     </div>
   );

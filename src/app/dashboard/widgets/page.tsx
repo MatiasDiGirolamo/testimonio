@@ -210,12 +210,9 @@ export default function WidgetsPage() {
                         variant="outline"
                         className="flex-1"
                         onClick={() => {
-                          const previewHtml = `<!DOCTYPE html>
-<html><head><title>Preview Widget</title><style>body{font-family:system-ui;padding:40px;background:#f5f5f5;}</style></head>
-<body><h2>Preview del Widget</h2><div data-testimonio-widget="${widget.id}"></div>
-<script src="${window.location.origin}/api/embed/${widget.id}"></script></body></html>`;
-                          const blob = new Blob([previewHtml], { type: 'text/html' });
-                          window.open(URL.createObjectURL(blob), '_blank');
+                          const baseUrl = window.location.origin;
+                          const previewUrl = `${baseUrl}/api/embed/${widget.id}/preview`;
+                          window.open(previewUrl, '_blank');
                         }}
                       >
                         Preview
