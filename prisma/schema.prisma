@@ -1,0 +1,244 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Usuarios del sistema
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Stripe / Billing
+  stripeCustomerId     String?   @unique
+  stripePriceId        String?
+  stripeSubscriptionId String?   @unique
+  stripeCurrentPeriodEnd DateTime?
+  plan                 Plan      @default(FREE)
+  
+  // Relaciones
+  projects      Project[]
+  accounts      Account[]
+  sessions      Session[]
+}
+
+enum Plan {
+  FREE
+  PRO
+  BUSINESS
+}
+
+// Para NextAuth
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Proyecto/Espacio de trabajo
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  logo        String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Dueño
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Relaciones
+  testimonials Testimonial[]
+  forms        CollectionForm[]
+  widgets      Widget[]
+}
+
+// Formulario de recolección
+model CollectionForm {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  
+  // Configuración del formulario
+  headline    String   @default("¿Cómo fue tu experiencia?")
+  description String?
+  thankYouMsg String   @default("¡Gracias por tu testimonio!")
+  
+  // Campos a pedir
+  askName     Boolean  @default(true)
+  askEmail    Boolean  @default(true)
+  askCompany  Boolean  @default(false)
+  askRole     Boolean  @default(false)
+  askRating   Boolean  @default(true)
+  askPhoto    Boolean  @default(true)
+  askVideo    Boolean  @default(false)
+  
+  // Personalización
+  primaryColor String  @default("#3b82f6")
+  
+  // Stats
+  views       Int      @default(0)
+  submissions Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  testimonials Testimonial[]
+}
+
+// Testimonio individual
+model Testimonial {
+  id          String   @id @default(cuid())
+  
+  // Contenido
+  text        String   @db.Text
+  rating      Int?     // 1-5
+  
+  // Autor
+  authorName  String
+  authorEmail String?
+  authorTitle String?  // Ej: "CEO de Empresa"
+  authorCompany String?
+  authorPhoto String?
+  
+  // Video testimonio
+  videoUrl    String?
+  
+  // Estado
+  status      TestimonialStatus @default(PENDING)
+  featured    Boolean  @default(false)
+  
+  // Metadata
+  source      String   @default("form") // form, import, manual
+  importedFrom String? // google, twitter, etc
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  formId      String?
+  form        CollectionForm? @relation(fields: [formId], references: [id])
+  
+  // Para widgets
+  widgetTestimonials WidgetTestimonial[]
+}
+
+enum TestimonialStatus {
+  PENDING   // Esperando aprobación
+  APPROVED  // Aprobado para mostrar
+  REJECTED  // Rechazado
+  ARCHIVED  // Archivado
+}
+
+// Widget embebible
+model Widget {
+  id          String   @id @default(cuid())
+  name        String
+  
+  // Tipo de widget
+  type        WidgetType @default(CAROUSEL)
+  
+  // Configuración visual
+  theme       String   @default("light") // light, dark, auto
+  primaryColor String  @default("#C45D3E")
+  bgColor     String   @default("#FAF7F2")
+  textColor   String   @default("#2D2A26")
+  borderRadius Int     @default(16)
+  showRating  Boolean  @default(true)
+  showPhoto   Boolean  @default(true)
+  showCompany Boolean  @default(true)
+  showBranding Boolean @default(true)
+  
+  // Layout específico
+  columns     Int      @default(3)
+  maxItems    Int      @default(10)
+  
+  // Stats
+  views       Int      @default(0)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relaciones
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  testimonials WidgetTestimonial[]
+}
+
+enum WidgetType {
+  CAROUSEL    // Slider horizontal
+  GRID        // Grid de cards
+  WALL        // Wall of love estilo masonry
+  SINGLE      // Un solo testimonio
+  BADGE       // Badge compacto con rating
+}
+
+// Relación muchos a muchos entre Widget y Testimonial
+model WidgetTestimonial {
+  id            String   @id @default(cuid())
+  order         Int      @default(0)
+  
+  widgetId      String
+  widget        Widget   @relation(fields: [widgetId], references: [id], onDelete: Cascade)
+  
+  testimonialId String
+  testimonial   Testimonial @relation(fields: [testimonialId], references: [id], onDelete: Cascade)
+  
+  @@unique([widgetId, testimonialId])
+}
+
+// Waitlist para la landing
+model WaitlistEntry {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String?  // landing, twitter, etc
+  createdAt DateTime @default(now())
+}
