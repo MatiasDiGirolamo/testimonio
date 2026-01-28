@@ -46,14 +46,14 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
 
 export const PLAN_PRICES = {
   PRO: {
-    monthly: 15,
-    yearly: 150, // 2 meses gratis
+    monthly: 10,
+    yearly: 100, // 2 meses gratis
     stripePriceIdMonthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID,
     stripePriceIdYearly: process.env.STRIPE_PRO_YEARLY_PRICE_ID,
   },
   BUSINESS: {
-    monthly: 29,
-    yearly: 290, // 2 meses gratis
+    monthly: 20,
+    yearly: 200, // 2 meses gratis
     stripePriceIdMonthly: process.env.STRIPE_BUSINESS_MONTHLY_PRICE_ID,
     stripePriceIdYearly: process.env.STRIPE_BUSINESS_YEARLY_PRICE_ID,
   },

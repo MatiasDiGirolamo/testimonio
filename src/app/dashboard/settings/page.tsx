@@ -166,7 +166,7 @@ function SettingsContent() {
                     <p className="text-sm text-muted-foreground">Para negocios</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-semibold">$15</p>
+                    <p className="font-serif text-2xl font-semibold">$10</p>
                     <p className="text-xs text-muted-foreground">/mes</p>
                   </div>
                 </div>
@@ -192,7 +192,7 @@ function SettingsContent() {
                     <p className="text-sm text-muted-foreground">Para equipos</p>
                   </div>
                   <div className="text-right">
-                    <p className="font-serif text-2xl font-semibold">$29</p>
+                    <p className="font-serif text-2xl font-semibold">$20</p>
                     <p className="text-xs text-muted-foreground">/mes</p>
                   </div>
                 </div>

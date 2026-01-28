@@ -89,8 +89,8 @@ LEMONSQUEEZY_WEBHOOK_SECRET=""
 | Plan | Precio | Incluye |
 |------|--------|---------|
 | **Free** | $0/mes | 10 testimonios, 1 form, 1 widget |
-| **Pro** | $15/mes | 100 testimonios, ilimitados forms y widgets, sin branding |
-| **Business** | $29/mes | Ilimitado, WhatsApp, API access |
+| **Pro** | $10/mes | 100 testimonios, ilimitados forms y widgets, sin branding |
+| **Business** | $20/mes | Ilimitado, WhatsApp, API access |
 
 ---
 

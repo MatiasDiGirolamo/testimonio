@@ -302,7 +302,7 @@ export default function Home() {
               />
               <PricingCard
                 name="Pro"
-                price="$15"
+                price="$10"
                 period="/mes"
                 description="Para negocios"
                 features={[
@@ -316,7 +316,7 @@ export default function Home() {
               />
               <PricingCard
                 name="Business"
-                price="$29"
+                price="$20"
                 period="/mes"
                 description="Para equipos"
                 features={[
