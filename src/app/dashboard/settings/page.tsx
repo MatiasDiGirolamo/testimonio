@@ -11,11 +11,26 @@ interface UserPlan {
   stripeCurrentPeriodEnd?: string;
 }
 
+interface ApiKey {
+  id: string;
+  name: string;
+  keyPreview: string;
+  permissions: string[];
+  lastUsedAt: string | null;
+  usageCount: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
 function SettingsContent() {
   const searchParams = useSearchParams();
   const [userPlan, setUserPlan] = useState<UserPlan>({ plan: "FREE" });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const [newKeyName, setNewKeyName] = useState("");
+  const [newKey, setNewKey] = useState<string | null>(null);
+  const [creatingKey, setCreatingKey] = useState(false);
 
   useEffect(() => {
     // Check for success/cancel from Stripe
@@ -31,6 +46,56 @@ function SettingsContent() {
     // Load user plan
     loadUserPlan();
   }, [searchParams]);
+
+  useEffect(() => {
+    if (userPlan.plan === "BUSINESS") {
+      loadApiKeys();
+    }
+  }, [userPlan.plan]);
+
+  async function loadApiKeys() {
+    try {
+      const res = await fetch("/api/keys");
+      if (res.ok) {
+        const data = await res.json();
+        setApiKeys(data);
+      }
+    } catch (error) {
+      console.error("Error loading API keys:", error);
+    }
+  }
+
+  async function createApiKey() {
+    if (!newKeyName.trim()) return;
+    setCreatingKey(true);
+    try {
+      const res = await fetch("/api/keys", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newKeyName, permissions: ["read", "write"] }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNewKey(data.key);
+        setNewKeyName("");
+        loadApiKeys();
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setCreatingKey(false);
+    }
+  }
+
+  async function deleteApiKey(id: string) {
+    if (!confirm("¿Eliminar esta API key?")) return;
+    try {
+      await fetch(`/api/keys?id=${id}`, { method: "DELETE" });
+      loadApiKeys();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
 
   async function loadUserPlan() {
     try {
@@ -237,6 +302,90 @@ function SettingsContent() {
             </Button>
           </div>
         </div>
+
+        {/* API Keys - Business only */}
+        {userPlan.plan === "BUSINESS" && (
+          <div className="bg-card border border-border rounded-2xl p-6">
+            <h2 className="font-serif font-semibold text-lg mb-4">🔑 API Keys</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              Usá la API para integrar TestimonIO con tus sistemas.
+            </p>
+
+            {/* New key created message */}
+            {newKey && (
+              <div className="bg-accent/10 border border-accent/30 rounded-xl p-4 mb-4">
+                <p className="text-sm font-medium mb-2">⚠️ Guardá esta key - no se puede recuperar:</p>
+                <code className="block bg-background p-2 rounded text-sm font-mono break-all">
+                  {newKey}
+                </code>
+                <Button 
+                  size="sm" 
+                  variant="ghost" 
+                  className="mt-2"
+                  onClick={() => {
+                    navigator.clipboard.writeText(newKey);
+                    setMessage("Key copiada!");
+                    setTimeout(() => setMessage(""), 2000);
+                  }}
+                >
+                  📋 Copiar
+                </Button>
+              </div>
+            )}
+
+            {/* Create new key */}
+            <div className="flex gap-2 mb-4">
+              <Input
+                placeholder="Nombre de la key (ej: Production)"
+                value={newKeyName}
+                onChange={(e) => setNewKeyName(e.target.value)}
+                className="bg-background"
+              />
+              <Button 
+                onClick={createApiKey}
+                disabled={creatingKey || !newKeyName.trim()}
+              >
+                {creatingKey ? "..." : "Crear"}
+              </Button>
+            </div>
+
+            {/* Existing keys */}
+            {apiKeys.length > 0 ? (
+              <div className="space-y-2">
+                {apiKeys.map((key) => (
+                  <div key={key.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div>
+                      <p className="font-medium">{key.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        tm_...{key.keyPreview} · {key.usageCount} usos
+                        {key.lastUsedAt && ` · Último: ${new Date(key.lastUsedAt).toLocaleDateString()}`}
+                      </p>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => deleteApiKey(key.id)}
+                    >
+                      🗑️
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No tenés API keys creadas</p>
+            )}
+
+            {/* API Docs link */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <p className="text-sm text-muted-foreground">
+                📖 <strong>Endpoint:</strong> <code>GET /api/v1/testimonials</code>
+              </p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Header: <code>Authorization: Bearer tm_xxx</code>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Danger zone */}
         <div className="bg-card border border-destructive/30 rounded-2xl p-6">

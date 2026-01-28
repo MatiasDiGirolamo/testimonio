@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Inicio", icon: "🏠" },
-  { href: "/dashboard/testimonials", label: "TestimonIOs", icon: "💬" },
+  { href: "/dashboard/testimonials", label: "Testimonios", icon: "💬" },
   { href: "/dashboard/forms", label: "Formularios", icon: "📝" },
   { href: "/dashboard/widgets", label: "Widgets", icon: "🎨" },
+  { href: "/dashboard/analytics", label: "Analytics", icon: "📊" },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
