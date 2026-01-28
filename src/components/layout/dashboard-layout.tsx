@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Inicio", icon: "🏠" },
-  { href: "/dashboard/testimonials", label: "Testimonios", icon: "💬" },
+  { href: "/dashboard/testimonials", label: "TestimonIOs", icon: "💬" },
   { href: "/dashboard/forms", label: "Formularios", icon: "📝" },
   { href: "/dashboard/widgets", label: "Widgets", icon: "🎨" },
 ];
@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <Link href="/dashboard" className="flex items-center gap-2">
               <span className="text-2xl">💬</span>
               <span className="font-serif font-semibold text-lg hidden sm:block">
-                Testimonio
+                TestimonIO
               </span>
             </Link>
             

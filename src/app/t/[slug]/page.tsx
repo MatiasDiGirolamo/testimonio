@@ -203,7 +203,7 @@ export default function TestimonialFormPage({
             target="_blank"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Powered by <span className="font-semibold">Testimonio</span>
+            Powered by <span className="font-semibold">TestimonIO</span>
           </a>
         </div>
       </div>

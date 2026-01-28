@@ -51,7 +51,7 @@ export default function RegisterPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-2 mb-6">
             <span className="text-2xl">💬</span>
-            <span className="font-serif font-semibold text-xl">Testimonio</span>
+            <span className="font-serif font-semibold text-xl">TestimonIO</span>
           </Link>
           <h1 className="font-serif text-3xl font-semibold mb-2">Creá tu cuenta</h1>
           <p className="text-muted-foreground">

@@ -135,7 +135,7 @@ export function TestimonialCarousel({
       {/* Powered by */}
       <div className="text-center mt-2">
         <a
-          href="https://testimonio.app"
+          href="https://testimon-io.vercel.app"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs text-slate-400 hover:text-slate-600"

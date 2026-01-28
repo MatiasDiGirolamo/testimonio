@@ -15,11 +15,11 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Testimonio - La voz de tus clientes, amplificada",
+  title: "TestimonIO - La voz de tus clientes, amplificada",
   description: "Recolectá testimonios reales de tus clientes y mostralos donde importa. Simple, cálido, efectivo.",
   keywords: ["testimonios", "reviews", "social proof", "conversiones", "LATAM"],
   openGraph: {
-    title: "Testimonio - La voz de tus clientes, amplificada",
+    title: "TestimonIO - La voz de tus clientes, amplificada",
     description: "Recolectá testimonios reales y mostralos donde importa.",
     type: "website",
   },

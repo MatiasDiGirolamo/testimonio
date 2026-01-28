@@ -26,10 +26,18 @@ export async function GET(
       data: { views: { increment: 1 } },
     });
 
-    // Obtener testimonios aprobados del proyecto
+    // Obtener todos los proyectos del usuario dueño del widget
+    const userProjects = await prisma.project.findMany({
+      where: { userId: widget.project.userId },
+      select: { id: true },
+    });
+    
+    const projectIds = userProjects.map(p => p.id);
+
+    // Obtener testimonios aprobados de todos los proyectos del usuario
     const testimonials = await prisma.testimonial.findMany({
       where: {
-        projectId: widget.projectId,
+        projectId: { in: projectIds },
         status: "APPROVED",
       },
       orderBy: { createdAt: "desc" },
@@ -207,7 +215,7 @@ function generateWidgetScript(widgetId: string, data: object): string {
 
   function renderBranding() {
     if (!WIDGET_DATA.showBranding) return '';
-    return '<div class="tm-powered"><a href="https://testimonio.app" target="_blank">Powered by Testimonio</a></div>';
+    return '<div class="tm-powered"><a href="https://testimon-io.vercel.app" target="_blank">Powered by TestimonIO</a></div>';
   }
 
   // Render based on type

@@ -89,9 +89,9 @@ function SettingsContent() {
   }
 
   const planFeatures = {
-    FREE: ["10 testimonios", "1 formulario", "1 widget", "Branding de Testimonio"],
+    FREE: ["10 testimonios", "1 formulario", "1 widget", "Branding de TestimonIO"],
     PRO: ["100 testimonios", "Formularios ilimitados", "Widgets ilimitados", "Sin branding", "Import Google Reviews"],
-    BUSINESS: ["Testimonios ilimitados", "Todo de Pro", "WhatsApp bot", "Analytics avanzados", "API access"],
+    BUSINESS: ["TestimonIOs ilimitados", "Todo de Pro", "WhatsApp bot", "Analytics avanzados", "API access"],
   };
 
   return (
@@ -197,7 +197,7 @@ function SettingsContent() {
                   </div>
                 </div>
                 <ul className="space-y-1 text-sm text-muted-foreground mb-4">
-                  <li>✓ Testimonios ilimitados</li>
+                  <li>✓ TestimonIOs ilimitados</li>
                   <li>✓ WhatsApp bot</li>
                   <li>✓ API access</li>
                 </ul>

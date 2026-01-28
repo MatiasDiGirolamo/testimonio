@@ -46,7 +46,7 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <span className="text-2xl">💬</span>
-            <span className="font-serif font-semibold text-xl">Testimonio</span>
+            <span className="font-serif font-semibold text-xl">TestimonIO</span>
           </Link>
           <div className="flex items-center gap-4">
             <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition hidden sm:block">
@@ -128,7 +128,7 @@ export default function Home() {
                       <span className="text-amber-500">★★★★★</span>
                     </div>
                     <p className="text-lg leading-relaxed mb-4">
-                      "Desde que implementamos Testimonio, nuestras conversiones subieron <span className="font-semibold text-primary">un 34%</span>. 
+                      "Desde que implementamos TestimonIO, nuestras conversiones subieron <span className="font-semibold text-primary">un 34%</span>. 
                       Lo mejor es lo fácil que es pedirles reviews a los clientes."
                     </p>
                     <div>
@@ -297,7 +297,7 @@ export default function Home() {
                   "10 testimonios",
                   "1 formulario",
                   "1 widget",
-                  "Badge de Testimonio",
+                  "Badge de TestimonIO",
                 ]}
               />
               <PricingCard
@@ -320,7 +320,7 @@ export default function Home() {
                 period="/mes"
                 description="Para equipos"
                 features={[
-                  "Testimonios ilimitados",
+                  "TestimonIOs ilimitados",
                   "Todo de Pro",
                   "WhatsApp bot",
                   "Analytics avanzados",
@@ -355,12 +355,12 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-xl">💬</span>
-              <span className="font-serif font-medium">Testimonio</span>
+              <span className="font-serif font-medium">TestimonIO</span>
             </div>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition">Términos</a>
               <a href="#" className="hover:text-foreground transition">Privacidad</a>
-              <a href="mailto:hola@testimonio.app" className="hover:text-foreground transition">Contacto</a>
+              <a href="mailto:hola@testimon.io" className="hover:text-foreground transition">Contacto</a>
             </div>
             <p className="text-sm text-muted-foreground">
               Hecho con cariño para LATAM 🧉
